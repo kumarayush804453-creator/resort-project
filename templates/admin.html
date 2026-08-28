@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Booking Dashboard - Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light p-4">
+    <div class="container bg-white p-4 rounded shadow-sm">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="fa-solid fa-hotel"></i> All Resort Bookings</h2>
+            <a href="/" class="btn btn-outline-primary">Back to Website</a>
+        </div>
+        <table class="table table-bordered table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Full Name</th>
+                    <th>Email</th>
+                    <th>Room Type</th>
+                    <th>Check-in Date</th>
+                    <th>Message</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for b in bookings %}
+                <tr>
+                    <td>{{ b.id }}</td>
+                    <td>{{ b.name }}</td>
+                    <td>{{ b.email }}</td>
+                    <td><span class="badge bg-success">{{ b.room_type }}</span></td>
+                    <td>{{ b.check_in }}</td>
+                    <td>{{ b.message or 'N/A' }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6" class="text-center text-muted">No bookings found yet.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
