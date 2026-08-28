@@ -25,11 +25,8 @@ with app.app_context():
 
 # --- ROUTES ---
 
+# 1. Main Website Homepage Route
 @app.route('/', methods=['GET', 'POST'])
-@app.route('/admin')
-def admin():
-    bookings = Booking.query.order_by(Booking.id.desc()).all()
-    return render_template('admin.html', bookings=bookings)
 def home():
     if request.method == 'POST':
         # Form submission logic
@@ -56,6 +53,14 @@ def home():
             return redirect(url_for('home'))
 
     return render_template('index.html')
+
+
+# 2. Admin Dashboard Route
+@app.route('/admin')
+def admin():
+    bookings = Booking.query.order_by(Booking.id.desc()).all()
+    return render_template('admin.html', bookings=bookings)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
