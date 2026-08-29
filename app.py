@@ -10,10 +10,11 @@ app.config['STATIC_FOLDER'] = 'static'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SECRET_KEY'] = 'a_very_secret_key_for_flash_messages'
 
-# --- EMAIL CONFIGURATION ---
+# --- EMAIL CONFIGURATION (Updated to Port 465 SSL for Render) ---
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-app.config['MAIL_PORT'] = 587
-app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = True
 app.config['MAIL_USERNAME'] = 'kumarayush804453@gmail.com'
 app.config['MAIL_PASSWORD'] = 'ifyj jjmk owev douy'
 ADMIN_EMAIL = 'kumarayush804453@gmail.com'
