@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail, Message
 import pandas as pd
 import io
+import threading
 
 app = Flask(__name__)
 app.config['STATIC_FOLDER'] = 'static'
@@ -37,22 +38,17 @@ class Booking(db.Model):
     status = db.Column(db.String(20), default='Pending')
 
 with app.app_context():
+    # Purana database drop karke naya table fresh create karega taaki phone number show ho
+    db.drop_all()
     db.create_all()
-    # Auto-add missing phone column if database already existed on server
-    try:
-        with db.engine.connect() as conn:
-            conn.execute(db.text('ALTER TABLE booking ADD COLUMN phone VARCHAR(20)'))
-            conn.commit()
-    except Exception:
-        pass
-        
-    # Auto-add missing status column if database already existed on server
-    try:
-        with db.engine.connect() as conn:
-            conn.execute(db.text("ALTER TABLE booking ADD COLUMN status VARCHAR(20) DEFAULT 'Pending'"))
-            conn.commit()
-    except Exception:
-        pass
+
+# Helper function for asynchronous email sending (prevents loading timeout)
+def send_async_email(app, msg):
+    with app.app_context():
+        try:
+            mail.send(msg)
+        except Exception as e:
+            print("Async Mail Error:", e)
 
 # --- PUBLIC ROUTES ---
 
@@ -82,7 +78,7 @@ def home():
             db.session.add(new_booking)
             db.session.commit()
 
-            # --- EMAIL TO CLIENT & ADMIN ON BOOKING REQUEST ---
+            # --- BACKGROUND EMAIL TO CLIENT & ADMIN ---
             try:
                 # 1. Customer Email
                 cust_msg = Message(
@@ -91,7 +87,7 @@ def home():
                     recipients=[email]
                 )
                 cust_msg.body = f"Hello {name},\n\nThank you for choosing Paradise Resort!\nYour booking request for {room_type} on {check_in} has been successfully received.\n\nCurrent Status: Pending\n\nWe will update you once your booking is confirmed.\n\nBest Regards,\nParadise Resort Team"
-                mail.send(cust_msg)
+                threading.Thread(target=send_async_email, args=(app, cust_msg)).start()
 
                 # 2. Admin Alert Email
                 admin_msg = Message(
@@ -100,9 +96,9 @@ def home():
                     recipients=[ADMIN_EMAIL]
                 )
                 admin_msg.body = f"New Booking Received!\n\nName: {name}\nEmail: {email}\nPhone: {phone}\nRoom: {room_type}\nCheck-in: {check_in}\nMessage: {message}"
-                mail.send(admin_msg)
+                threading.Thread(target=send_async_email, args=(app, admin_msg)).start()
             except Exception as mail_err:
-                print("Mail Error:", mail_err)
+                print("Mail Thread Error:", mail_err)
 
             flash(f"Thank you, {name}! Your {room_type} booking request is received.", "success")
             return redirect(url_for('home'))
@@ -195,7 +191,7 @@ def update_status(id, new_status):
     booking.status = new_status
     db.session.commit()
 
-    # --- EMAIL TO CLIENT ON STATUS CHANGE ---
+    # --- BACKGROUND EMAIL TO CLIENT ON STATUS CHANGE ---
     try:
         status_msg = Message(
             subject=f"Booking Update: Status is now {new_status} - Paradise Resort",
@@ -210,9 +206,9 @@ def update_status(id, new_status):
         else:
             status_msg.body = f"Hello {booking.name},\n\nYour booking status for {booking.room_type} on {booking.check_in} has been updated to: {new_status}.\n\nBest regards,\nParadise Resort Management"
 
-        mail.send(status_msg)
+        threading.Thread(target=send_async_email, args=(app, status_msg)).start()
     except Exception as mail_err:
-        print("Status Email Error:", mail_err)
+        print("Status Email Thread Error:", mail_err)
 
     flash(f"Booking #{id} status updated to {new_status} and notification email sent to customer.", "success")
     return redirect(url_for('admin'))
