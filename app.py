@@ -45,6 +45,14 @@ with app.app_context():
             conn.commit()
     except Exception:
         pass
+        
+    # Auto-add missing status column if database already existed on server
+    try:
+        with db.engine.connect() as conn:
+            conn.execute(db.text("ALTER TABLE booking ADD COLUMN status VARCHAR(20) DEFAULT 'Pending'"))
+            conn.commit()
+    except Exception:
+        pass
 
 # --- PUBLIC ROUTES ---
 
