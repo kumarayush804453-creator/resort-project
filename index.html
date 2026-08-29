@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paradise Luxury Resort & Spa</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,800;1,400&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Country Flag Phone Input CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/css/intlTelInput.css" />
+
+    <!-- Custom CSS File -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    <style>
+        /* Flag Input Styling Fix for Bootstrap */
+        .iti { width: 100%; }
+        .iti__country-list { color: #333; }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="#home"><i class="fa-solid fa-hotel me-2"></i>PARADISE RESORT</a>
+            <button class="navbar-toggler navbar-dark" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" data-bs-toggle="modal" data-bs-target="#aboutModal">About Us</a></li>
+                    <li class="nav-item"><a class="nav-link" data-bs-toggle="modal" data-bs-target="#roomsModal">Luxury Rooms</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#amenities">Amenities</a></li>
+                    <li class="nav-item"><a class="nav-link btn btn-outline-warning ms-3 px-3 text-warning" href="#book">Book Stay</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- FLASH MESSAGES -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="container mt-3 position-relative" style="z-index: 1050;">
+          {% for category, message in messages %}
+            <div class="alert alert-{{ 'danger' if category == 'error' else (category if category in ['success', 'warning', 'info', 'primary', 'secondary'] else 'info') }} alert-dismissible fade show shadow-sm" role="alert">
+              {% if category == 'success' %}
+                <i class="fa-solid fa-circle-check me-2"></i>
+              {% elif category == 'error' or category == 'danger' %}
+                <i class="fa-solid fa-circle-exclamation me-2"></i>
+              {% else %}
+                <i class="fa-solid fa-circle-info me-2"></i>
+              {% endif %}
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <!-- HERO SECTION -->
+    <section id="home" class="hero">
+        <div class="container">
+            <h1>Experience Pure Luxury</h1>
+            <p>Immerse yourself in world-class hospitality, breathtaking ocean views, and unmatched comfort at Paradise Resort & Spa.</p>
+            <a href="#book" class="btn btn-gold btn-lg me-3">Reserve Your Stay</a>
+            <button class="btn btn-outline-light btn-lg" data-bs-toggle="modal" data-bs-target="#aboutModal">About Our Story</button>
+        </div>
+    </section>
+
+    <!-- AMENITIES SECTION -->
+    <section id="amenities" class="py-5">
+        <div class="container py-4">
+            <div class="section-title">
+                <h2>Resort World-Class Amenities</h2>
+                <p>Designed to give you an unforgettable relaxation experience</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-3">
+                    <div class="amenity-card">
+                        <i class="fa-solid fa-water-ladder"></i>
+                        <h5>Infinity Pool</h5>
+                        <p class="small text-muted">Temperature-controlled pool with ocean views and private cabanas.</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="amenity-card">
+                        <i class="fa-solid fa-spa"></i>
+                        <h5>Wellness & Spa</h5>
+                        <p class="small text-muted">Rejuvenating aromatherapy massages and full-body spa treatments.</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="amenity-card">
+                        <i class="fa-solid fa-utensils"></i>
+                        <h5>Fine Dining</h5>
+                        <p class="small text-muted">Multi-cuisine gourmet restaurants prepared by top international chefs.</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="amenity-card">
+                        <i class="fa-solid fa-wifi"></i>
+                        <h5>High-Speed Wi-Fi</h5>
+                        <p class="small text-muted">Seamless high-speed internet access across the entire resort property.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ROOMS SECTION -->
+    <section id="rooms" class="py-5 bg-light">
+        <div class="container py-4">
+            <div class="section-title">
+                <h2>Our Luxury Accommodations</h2>
+                <p>Handcrafted suites designed for your ultimate comfort</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card room-card position-relative">
+                        <span class="room-badge">₹5,999 / Night</span>
+                        <img src="https://images.unsplash.com/photo-1611892440504-42a792e24d32?auto=format&fit=crop&w=800&q=80" class="card-img-top" alt="Deluxe Room">
+                        <div class="card-body p-4">
+                            <h5 class="card-title fw-bold">Deluxe Garden Suite</h5>
+                            <p class="card-text text-muted small">King Bed • Garden View • Free Breakfast • Private Balcony</p>
+                            <button class="btn btn-outline-dark w-100" data-bs-toggle="modal" data-bs-target="#roomsModal">View Full Specs</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card room-card position-relative">
+                        <span class="room-badge">₹9,499 / Night</span>
+                        <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=800&q=80" class="card-img-top" alt="Ocean Suite">
+                        <div class="card-body p-4">
+                            <h5 class="card-title fw-bold">Executive Ocean Villa</h5>
+                            <p class="card-text text-muted small">Ocean View • Private Jacuzzi • Butler Service • Mini Bar</p>
+                            <button class="btn btn-outline-dark w-100" data-bs-toggle="modal" data-bs-target="#roomsModal">View Full Specs</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card room-card position-relative">
+                        <span class="room-badge">₹15,999 / Night</span>
+                        <img src="https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&w=800&q=80" class="card-img-top" alt="Presidential Suite">
+                        <div class="card-body p-4">
+                            <h5 class="card-title fw-bold">Presidential Pool Suite</h5>
+                            <p class="card-text text-muted small">Private Plunge Pool • 2 Bedrooms • VIP Lounge Access</p>
+                            <button class="btn btn-outline-dark w-100" data-bs-toggle="modal" data-bs-target="#roomsModal">View Full Specs</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- BOOKING SECTION -->
+    <section id="book" class="py-5">
+        <div class="container py-4">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="booking-section">
+                        <div class="text-center mb-4">
+                            <h2 class="fw-bold font-serif">Reserve Your Stay</h2>
+                            <p class="text-muted">Fill out the details below to complete your booking reservation.</p>
+                        </div>
+                        <form action="/" method="POST">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label fw-medium">Full Name*</label>
+                                    <input type="text" name="name" class="form-control" placeholder="Enter your full name" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-medium">Email Address*</label>
+                                    <input type="email" name="email" class="form-control" placeholder="name@example.com" required>
+                                </div>
+                                
+                                <!-- UPDATED COUNTRY FLAG & 10-DIGIT PHONE FIELD -->
+                                <div class="col-md-6">
+                                    <label class="form-label fw-medium">Phone Number*</label><br>
+                                    <input type="tel" id="phone" name="phone" class="form-control w-100" placeholder="10-digit mobile number" pattern="[0-9]{10}" maxlength="10" title="Please enter exactly 10 digits" required>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label fw-medium">Room Type*</label>
+                                    <select name="room_type" class="form-select" required>
+                                        <option value="Deluxe Garden Suite">Deluxe Garden Suite (₹5,999/Night)</option>
+                                        <option value="Executive Ocean Villa">Executive Ocean Villa (₹9,499/Night)</option>
+                                        <option value="Presidential Pool Suite">Presidential Pool Suite (₹15,999/Night)</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-12">
+                                    <label class="form-label fw-medium">Check-in Date*</label>
+                                    <input type="date" name="check_in" class="form-control" required>
+                                </div>
+                                <div class="col-md-12">
+                                    <label class="form-label fw-medium">Special Requests / Notes</label>
+                                    <textarea name="message" class="form-control" rows="3" placeholder="Airport pickup, dietary needs, honeymoon arrangements..."></textarea>
+                                </div>
+                                <div class="col-md-12 text-center mt-4">
+                                    <button type="submit" class="btn btn-gold btn-lg w-100">Confirm Booking Request</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- INCLUDE MODALS FROM SEPARATE FILES -->
+    {% include 'about_modal.html' %}
+    {% include 'rooms_modal.html' %}
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="container text-center">
+            <h4 class="text-white mb-3">PARADISE LUXURY RESORT</h4>
+            <p class="mb-4">Parsa Bazar Road, Luxury Bay, Patna-804453</p>
+            <p class="small">© 2026 Paradise Resort. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Country Flag Phone Input JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/intlTelInput.min.js"></script>
+    <script>
+        const phoneInputField = document.querySelector("#phone");
+        window.intlTelInput(phoneInputField, {
+            initialCountry: "in", // Default India (+91)
+            preferredCountries: ["in", "us", "gb", "ae"],
+            separateDialCode: true,
+            utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js",
+        });
+    </script>
+
+    <!-- Custom JavaScript File -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
