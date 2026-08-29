@@ -1,3 +1,6 @@
 Flask
 Flask-SQLAlchemy
 gunicorn
+Flask-Mail
+pandas
+openpyxl
