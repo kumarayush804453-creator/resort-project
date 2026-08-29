@@ -219,11 +219,5 @@
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>
-```eof
 
-I have added the Flask flash message section right below the Navbar. 
 
-**Summary of additions:**
-- Uses `get_flashed_messages(with_categories=true)` to read flash messages from Flask.
-- Automatically maps categories like `'success'`, `'error'` / `'danger'`, or `'info'` to Bootstrap alert classes.
-- Includes dismissal buttons (`btn-close`) and matching FontAwesome icons.
