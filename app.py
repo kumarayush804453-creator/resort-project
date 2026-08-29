@@ -38,6 +38,13 @@ class Booking(db.Model):
 
 with app.app_context():
     db.create_all()
+    # Auto-add missing phone column if database already existed on server
+    try:
+        with db.engine.connect() as conn:
+            conn.execute(db.text('ALTER TABLE booking ADD COLUMN phone VARCHAR(20)'))
+            conn.commit()
+    except Exception:
+        pass
 
 # --- PUBLIC ROUTES ---
 
